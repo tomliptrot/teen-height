@@ -9,9 +9,16 @@ function toggleHeightInputs() {
     }
 }
 
+// Show the result section when calculation is complete
+function showResult() {
+    document.getElementById('result').classList.add('visible');
+}
+
 function calculateHeight() {
+    // Hide any previous results until new calculation is done
+    document.getElementById('result').classList.remove('visible');
     // 1. Get Input Values
-    const dob = new Date(document.getElementById('dob').value);
+    const ageInMonths = parseInt(document.getElementById('age_months').value);
     const pubertyStage = parseInt(document.getElementById('puberty').value);
     const heightUnit = document.getElementById('height_unit').value;
     let currentHeightCm;
@@ -23,18 +30,10 @@ function calculateHeight() {
         const inches = parseFloat(document.getElementById('height_in').value) || 0;
         currentHeightCm = (feet * 12 + inches) * 2.54;
     }
-    // 2. Calculate Age in Months
-    const today = new Date();
-    let ageInMonths = (today.getFullYear() - dob.getFullYear()) * 12;
-    ageInMonths += today.getMonth() - dob.getMonth();
-    //Correct for full months
-    if (today.getDate() < dob.getDate()){
-        ageInMonths -= 1
-    }
 
     // 3. Validate Inputs (updated for height)
     if (isNaN(ageInMonths) || ageInMonths < 160 || ageInMonths > 164) {
-        document.getElementById('predictedHeight').textContent = "Age must be between 160 and 164 months (13 years and 4 months to 13 years and 8 months).";
+        document.getElementById('predictedHeight').textContent = "Please select a valid age option.";
         return;
     }
 
@@ -92,23 +91,51 @@ function calculateHeight() {
 
     document.getElementById('predictedHeight').textContent = predictedHeightOutput;
      // --- Visualization Logic ---
-     const wembanyamaHeightCm = 223.52; // Victor Wembanyama's height in cm
+
+    // Update this part of the calculateHeight function:
+
+    // --- Visualization Logic ---
+    // Improved visualization logic that aligns images at the feet level
+    const wembanyamaHeightCm = 223.52; // Victor Wembanyama's height in cm
     const heightRatio = predictedHeightCm / wembanyamaHeightCm;
 
     const wembanyamaImage = document.getElementById('wembanyama-image');
+    const predictedHeightImage = document.getElementById('predicted-height-image');
+
+    // Preload both images
     wembanyamaImage.src = "wemby.png";
+    predictedHeightImage.src = "person.jpg"; 
 
-    wembanyamaImage.onload = () => {
-        const predictedHeightImage = document.getElementById('predicted-height-image');
-        predictedHeightImage.src = "person.jpg"; // Set the source for the second image
-
-        const wembyImageHeight = wembanyamaImage.clientHeight;
+    // Use a more reliable approach to handle scaling with bottom alignment
+    wembanyamaImage.onload = function() {
+        // Get the natural height of wembanyama image
+        const wembyNaturalHeight = wembanyamaImage.naturalHeight;
         
-        // Set the height of the *second image*
-        predictedHeightImage.style.height = (wembyImageHeight * heightRatio) + "px";
-        console.log(predictedHeightImage.style.height);
-        // Update the label for the predicted height bar
-        document.getElementById('predicted-height-label').textContent = predictedHeightOutput;
-        }
+        // Calculate the correct height for predicted height image
+        const predictedImageHeight = (wembyNaturalHeight * heightRatio);
+        
+        // Set explicit height on images
+        wembanyamaImage.style.height = wembyNaturalHeight + 'px';
+        predictedHeightImage.style.height = predictedImageHeight + 'px';
+        
+        // Ensure the visualization container is tall enough
+        document.getElementById('visualization-container').style.minHeight = 
+            (Math.max(wembyNaturalHeight, predictedImageHeight) + 50) + 'px';
+        
 
-}
+        // Update the label to say "Your height" with a line break before the predicted height
+        const predictedHeightLabel = document.getElementById('predicted-height-label');
+        predictedHeightLabel.innerHTML = "Your predicted height:<br>" + predictedHeightOutput;
+        
+        // Show the result section
+        showResult();
+    };
+};
+
+// Add error handling in case the image doesn't load
+wembanyamaImage.onerror = function() {
+    console.error("Failed to load Wembanyama image");
+    document.getElementById('predictedHeight').textContent = predictedHeightOutput;
+    document.getElementById('predicted-height-label').textContent = predictedHeightOutput;
+    showResult();
+};
