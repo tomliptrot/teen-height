@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basketball Player Height Predictor</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>Basketball Player Height Predictor</h1>
+    <p>Enter the player's details to predict their adult height. Only works with boys aged between 13 years and 4 months to 13 years and 8 months. Based on <a href="https://pubmed.ncbi.nlm.nih.gov/30024128/">this research</a></p>
+
+    <form id="heightForm">
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required><br><br>
+
+        <label for="puberty">Pubertal Stage:</label>
+        <select id="puberty" name="puberty" required>
+            <option value="">Select Stage</option>
+            <option value="1">ST1 (Below puberty)</option>
+            <option value="2">ST2 (Pre-pubescent)</option>
+            <option value="3">ST3 (Para-pubescent)</option>
+        </select><br><br>
+
+        <label for="height_unit">Height Unit:</label>
+        <select id="height_unit" name="height_unit" onchange="toggleHeightInputs()" required>
+            <option value="cm">cm</option>
+            <option value="ftin">Feet & Inches</option>
+        </select><br><br>
+
+        <div id="cm_input">
+          <label for="height_cm">Current Height (cm):</label>
+          <input type="number" id="height_cm" name="height_cm" step="0.1"><br><br>
+        </div>
+
+        <div id="ftin_input" style="display: none;">
+          <label for="height_ft">Feet:</label>
+          <input type="number" id="height_ft" name="height_ft" step="1"><br><br>
+          <label for="height_in">Inches:</label>
+          <input type="number" id="height_in" name="height_in" step="0.1"><br><br>
+        </div>
+
+        <button type="button" onclick="calculateHeight()">Predict Height</button>
+    </form>
+
+    <div id="result">
+        <h2>Predicted Adult Height:</h2>
+        <p id="predictedHeight"></p>
+        <div id="visualization-container">
+            <div class="person-container">
+                <img id="wembanyama-image" src="" alt="Victor Wembanyama" >
+                <p class="person-label">Victor Wembanyama (223.5 cm)</p>
+            </div>
+            <div class="person-container">
+                <!-- Use an img tag instead of the div -->
+                <img id="predicted-height-image" src="" alt="Predicted Height" >
+                <p id="predicted-height-label" class = "person-label"></p>
+            </div>
+        </div>
+        <p id="disclaimer"><b>Disclaimer:</b> This prediction is based on research data and may have a margin of error.</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

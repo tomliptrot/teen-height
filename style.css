@@ -1,0 +1,57 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="date"],
+input[type="number"],
+select {
+    width: 200px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#visualization-container {
+    display: flex;
+    justify-content: center; /* Center the images horizontally */
+    align-items: flex-end;   /* Align images to the bottom */
+    gap: 0px;              /* Space between images */
+    margin-top: 20px;
+    height: 500px;
+}
+
+#wembanyama-image, #predicted-height-image {
+   max-height: 100%;  /* Ensure images don't overflow the container */
+   width: auto;      /* Maintain aspect ratio */
+   /*  height: auto; */ /* Remove explicit height (it's now controlled by JS) */
+}
+
+.person-container{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+.person-label{
+    text-align: center;
+}
+
+/* Remove styles for #predicted-height-bar */
