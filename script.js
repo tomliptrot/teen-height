@@ -106,36 +106,52 @@ function calculateHeight() {
     wembanyamaImage.src = "wemby.png";
     predictedHeightImage.src = "person.jpg"; 
 
-    // Use a more reliable approach to handle scaling with bottom alignment
-    wembanyamaImage.onload = function() {
-        // Get the natural height of wembanyama image
-        const wembyNaturalHeight = wembanyamaImage.naturalHeight;
-        
-        // Calculate the correct height for predicted height image
-        const predictedImageHeight = (wembyNaturalHeight * heightRatio);
-        
-        // Set explicit height on images
-        wembanyamaImage.style.height = wembyNaturalHeight + 'px';
-        predictedHeightImage.style.height = predictedImageHeight + 'px';
-        
-        // Ensure the visualization container is tall enough
-        document.getElementById('visualization-container').style.minHeight = 
-            (Math.max(wembyNaturalHeight, predictedImageHeight) + 50) + 'px';
-        
+    // Update the label to say "Your height" with a line break before the predicted height
+    const predictedHeightLabel = document.getElementById('predicted-height-label');
+    predictedHeightLabel.innerHTML = "Your predicted height:<br>" + predictedHeightOutput;
 
-        // Update the label to say "Your height" with a line break before the predicted height
-        const predictedHeightLabel = document.getElementById('predicted-height-label');
-        predictedHeightLabel.innerHTML = "Your predicted height:<br>" + predictedHeightOutput;
-        
-        // Show the result section
+        // Make sure both images are loaded before applying height
+    let imagesLoaded = 0;
+    const onImageLoad = function() {
+        imagesLoaded++;
+        if (imagesLoaded === 2) {
+            // Both images loaded, now set heights
+            const wembyNaturalHeight = wembanyamaImage.naturalHeight;
+            console.log("Wembanyama image natural height: " + wembyNaturalHeight);
+            console.log("Predicted height image natural height: " + predictedHeightImage.naturalHeight);
+            console.log("heightRatio: " + heightRatio);
+
+            const predictedImageHeight = Math.round(wembyNaturalHeight * heightRatio);
+            
+            // Set explicit height on images
+            wembanyamaImage.style.height = wembyNaturalHeight + 'px';
+            predictedHeightImage.style.height = predictedImageHeight + 'px';
+            
+            // Ensure the visualization container is tall enough
+            document.getElementById('visualization-container').style.minHeight = 
+                (Math.max(wembyNaturalHeight, predictedImageHeight) + 50) + 'px';
+            
+            // Show the result section
+            showResult();
+        }
+    };
+
+    // Set up load handlers for both images
+    wembanyamaImage.onload = onImageLoad;
+    predictedHeightImage.onload = onImageLoad;
+
+
+    // Add error handling in case the image doesn't load
+    wembanyamaImage.onerror = function() {
+        console.error("Failed to load Wembanyama image");
+        document.getElementById('predictedHeight').textContent = predictedHeightOutput;
+        document.getElementById('predicted-height-label').textContent = predictedHeightOutput;
         showResult();
     };
-};
 
-// Add error handling in case the image doesn't load
-wembanyamaImage.onerror = function() {
-    console.error("Failed to load Wembanyama image");
-    document.getElementById('predictedHeight').textContent = predictedHeightOutput;
-    document.getElementById('predicted-height-label').textContent = predictedHeightOutput;
-    showResult();
+    predictedHeightImage.onerror = function() {
+        console.error("Failed to load comparison image");
+        document.getElementById('predictedHeight').textContent = predictedHeightOutput;
+        showResult();
+    };
 };
